@@ -30,8 +30,8 @@ cd enable-your-vibe-code
 # 2. 의존성 설치
 uv sync
 
-# 3. 환경변수 설정 (섹션 05부터 필요)
-cp 05-genie-mcp/.env.example 05-genie-mcp/.env
+# 3. 환경변수 설정 (섹션 04부터 필요)
+cp 04-genie-mcp/.env.example 04-genie-mcp/.env
 # .env 파일에 DATABRICKS_HOST, DATABRICKS_TOKEN, WAREHOUSE_ID 입력
 ```
 
@@ -62,10 +62,10 @@ build_serialized_space 함수를 구현해줘
 |---|----------|------|------|
 | 02 | `02-claude-code-features/` | Claude Code 사용법 | Claude Code로 Python 함수와 테스트 만들기 |
 | 03 | `03-mcp-architecture/` | MCP 아키텍처 | FastMCP로 첫 MCP 서버 만들기 |
-| 05 | `05-genie-mcp/` | Genie MCP 서버 | Databricks Genie API → MCP 서버 구현 |
-| 06 | `06-skills-workflow/` | Skills 워크플로우 | Custom Skill 작성, 레퍼런스 활용 |
-| 08 | `08-build-ui/` | UI 만들기 | FastAPI + 채팅 UI 구현 |
-| 09 | `09-deploy-to-databricks/` | Databricks 배포 | Databricks Apps로 배포 |
+| 04 | `04-genie-mcp/` | Genie MCP 서버 | Databricks Genie API → MCP 서버 구현 |
+| 05 | `05-skills/` | Skills | Custom Skill 작성, 레퍼런스 활용 |
+| 07 | `07-build-ui/` | UI 만들기 | FastAPI + 채팅 UI 구현 |
+| 08 | `08-deploy-to-databricks/` | Databricks 배포 | Databricks Apps로 배포 |
 
 각 디렉토리의 `README.md`에서 상세 실습 가이드를 확인하세요.
 
@@ -81,23 +81,23 @@ enable-your-vibe-code/
 │   ├── README.md
 │   ├── exercise_01_hello_mcp.py      # 스켈레톤 (TODO)
 │   └── exercise_02_calculator_mcp.py  # 스켈레톤 (TODO)
-├── 05-genie-mcp/
+├── 04-genie-mcp/
 │   ├── README.md
 │   ├── .env.example
 │   ├── exercise_00_checklist.py       # 환경 검증 (완성 코드)
 │   ├── exercise_01a_create_space.py   # 스켈레톤 (TODO)
 │   ├── exercise_01b_query_space.py    # 스켈레톤 (TODO)
 │   └── exercise_02_genie_mcp_server.py # 스켈레톤 (TODO)
-├── 06-skills-workflow/
+├── 05-skills/
 │   ├── README.md
 │   ├── exercise_01_simple_skill/      # SKILL.md 템플릿
 │   └── exercise_02_skill_with_refs/   # SKILL.md 템플릿 + references/
-├── 08-build-ui/
+├── 07-build-ui/
 │   ├── README.md
 │   ├── .env.example
 │   ├── exercise_01_fastapi_basic.py   # 스켈레톤 (TODO)
 │   └── exercise_02_genie_chatbot/     # app.py 스켈레톤 + static/GUIDE.md
-├── 09-deploy-to-databricks/
+├── 08-deploy-to-databricks/
 │   ├── README.md
 │   ├── .env.example
 │   ├── app.yaml                       # 참고용 설정

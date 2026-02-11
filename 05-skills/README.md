@@ -1,4 +1,4 @@
-# Section 06: Skills Workflow - 실습 코드
+# Section 05: Skills - 실습 코드
 
 Skills를 활용하여 개발 워크플로우를 구조화하는 실습 코드입니다.
 
@@ -43,5 +43,5 @@ claude
 
 ## 사전 준비
 
-- Section 04 (Skills Ecosystem)의 개념을 이해하고 있어야 합니다
+- Section 05 (Skills)의 강의 파트 개념을 이해하고 있어야 합니다
 - Claude Code가 설치되어 있어야 합니다

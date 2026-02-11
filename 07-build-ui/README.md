@@ -1,4 +1,4 @@
-# Section 08: Build UI - UI 만들기
+# Section 07: Build UI - UI 만들기
 
 Genie API를 연동한 채팅 UI를 Claude Code와 함께 구현하는 실습입니다.
 

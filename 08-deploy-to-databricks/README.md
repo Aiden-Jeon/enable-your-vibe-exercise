@@ -1,4 +1,4 @@
-# Section 09: Deploy to Databricks - Databricks 배포
+# Section 08: Deploy to Databricks - Databricks 배포
 
 ## 학습 목표
 

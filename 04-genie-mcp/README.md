@@ -1,4 +1,4 @@
-# Section 05: Genie MCP 서버 만들기
+# Section 04: Genie MCP 서버 만들기
 
 ## 학습 목표
 
@@ -142,7 +142,7 @@ TODO: 헬퍼 함수 3개 + MCP tool 3개 구현
   "mcpServers": {
     "genie": {
       "command": "python",
-      "args": ["05-genie-mcp/exercise_02_genie_mcp_server.py"],
+      "args": ["04-genie-mcp/exercise_02_genie_mcp_server.py"],
       "cwd": "."
     }
   }
