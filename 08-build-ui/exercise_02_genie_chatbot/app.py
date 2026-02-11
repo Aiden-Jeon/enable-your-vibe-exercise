@@ -2,6 +2,13 @@
 Exercise 02: Genie 챗봇 - FastAPI 백엔드
 Genie API를 연동한 채팅 애플리케이션 백엔드
 
+요구사항:
+1. POST /api/chat : Genie에 질문을 보내고 결과를 반환
+   - 새 대화 생성 또는 기존 대화 이어가기
+   - 메시지 전송 → 폴링 → 응답 파싱
+2. GET / : 정적 HTML 파일 서빙
+3. GET /api/health : 헬스 체크
+
 실행: python app.py
 접속: http://localhost:8000
 """
@@ -53,58 +60,25 @@ async def home():
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
+    """Genie에 질문을 보내고 결과를 반환합니다.
+
+    흐름:
+    1. conversation_id가 없으면 새 대화 생성 (POST /conversations)
+    2. 메시지 전송 (POST /conversations/{id}/messages)
+    3. 결과 폴링 (GET /conversations/{id}/messages/{msg_id})
+    4. 응답 파싱 (attachments에서 text/query 추출)
+    """
     if not all([DATABRICKS_HOST, DATABRICKS_TOKEN, GENIE_SPACE_ID]):
         raise HTTPException(status_code=500, detail="Databricks 환경변수가 설정되지 않았습니다")
 
-    try:
-        # 대화 생성 또는 기존 대화 사용
-        if req.conversation_id:
-            conversation_id = req.conversation_id
-        else:
-            resp = httpx.post(f"{base_url}/conversations", headers=headers)
-            resp.raise_for_status()
-            conversation_id = resp.json()["conversation_id"]
-
-        # 메시지 전송
-        resp = httpx.post(
-            f"{base_url}/conversations/{conversation_id}/messages",
-            headers=headers,
-            json={"content": req.message},
-        )
-        resp.raise_for_status()
-        message_id = resp.json()["message_id"]
-
-        # 결과 폴링
-        url = f"{base_url}/conversations/{conversation_id}/messages/{message_id}"
-        for _ in range(30):
-            resp = httpx.get(url, headers=headers)
-            resp.raise_for_status()
-            data = resp.json()
-            status = data.get("status", "")
-            if status == "COMPLETED":
-                break
-            if status in ("FAILED", "CANCELLED"):
-                raise HTTPException(status_code=500, detail=f"Genie 질의 실패: {status}")
-            time.sleep(2)
-        else:
-            raise HTTPException(status_code=504, detail="Genie 응답 시간 초과")
-
-        # 응답 파싱
-        attachments = data.get("attachments", [])
-        reply_parts = []
-        sql = None
-        for att in attachments:
-            if "text" in att:
-                reply_parts.append(att["text"].get("content", ""))
-            if "query" in att:
-                sql = att["query"].get("query", "")
-                reply_parts.append(f"실행된 SQL:\n```sql\n{sql}\n```")
-
-        reply = "\n\n".join(reply_parts) if reply_parts else "응답을 파싱할 수 없습니다."
-        return ChatResponse(reply=reply, conversation_id=conversation_id, sql=sql)
-
-    except httpx.HTTPError as e:
-        raise HTTPException(status_code=502, detail=f"Genie API 호출 실패: {str(e)}")
+    # TODO: Genie API를 호출하여 채팅 기능을 구현하세요
+    # 힌트:
+    # 1. req.conversation_id가 없으면 POST {base_url}/conversations로 새 대화 생성
+    # 2. POST {base_url}/conversations/{conversation_id}/messages로 메시지 전송
+    # 3. GET {url}로 폴링하여 status가 "COMPLETED"될 때까지 대기
+    # 4. attachments에서 text.content와 query.query를 추출
+    # 5. ChatResponse(reply=..., conversation_id=..., sql=...)로 반환
+    raise NotImplementedError("chat 엔드포인트를 구현하세요")
 
 
 @app.get("/api/health")

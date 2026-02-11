@@ -7,6 +7,9 @@
 이 레포는 **Enable Your Vibe** 핸즈온 세션의 실습 코드만 모아둔 저장소입니다.
 슬라이드 자료는 별도 레포([enable-your-vibe](https://github.com/aiden-jeon/enable-your-vibe))를 참고하세요.
 
+**실습 방식**: 각 exercise 파일에는 함수 시그니처와 TODO 주석이 포함되어 있습니다.
+**Claude Code를 사용하여 TODO를 구현**하는 Vibe Coding 방식으로 진행합니다.
+
 ## 사전 준비
 
 | 항목 | 설명 |
@@ -32,10 +35,32 @@ cp 05-genie-mcp/.env.example 05-genie-mcp/.env
 # .env 파일에 DATABRICKS_HOST, DATABRICKS_TOKEN, WAREHOUSE_ID 입력
 ```
 
+## 실습 워크플로우
+
+각 실습은 다음 순서로 진행합니다:
+
+1. **스켈레톤 파일 확인** — TODO 주석과 요구사항을 읽습니다
+2. **Claude Code로 구현** — Claude Code에게 TODO 구현을 요청합니다
+3. **실행 및 테스트** — 구현된 코드를 실행하여 동작을 확인합니다
+
+### Claude Code 프롬프트 예시
+
+```
+# 파일의 TODO를 구현해줘
+exercise_01_hello_mcp.py의 TODO를 구현해줘
+
+# 특정 함수 구현 요청
+build_serialized_space 함수를 구현해줘
+
+# 전체 파일 구현
+이 파일의 모든 TODO를 요구사항에 맞게 구현해줘
+```
+
 ## 실습 순서
 
 | # | 디렉토리 | 제목 | 설명 |
 |---|----------|------|------|
+| 02 | `02-claude-code-features/` | Claude Code 사용법 | Claude Code로 Python 함수와 테스트 만들기 |
 | 03 | `03-mcp-architecture/` | MCP 아키텍처 | FastMCP로 첫 MCP 서버 만들기 |
 | 05 | `05-genie-mcp/` | Genie MCP 서버 | Databricks Genie API → MCP 서버 구현 |
 | 06 | `06-skills-workflow/` | Skills 워크플로우 | Custom Skill 작성, 레퍼런스 활용 |
@@ -48,31 +73,35 @@ cp 05-genie-mcp/.env.example 05-genie-mcp/.env
 
 ```
 enable-your-vibe-code/
+├── 02-claude-code-features/
+│   ├── README.md
+│   ├── exercise_01_fibonacci.py       # 스켈레톤 (TODO)
+│   └── exercise_02_fibonacci_test.py  # 스켈레톤 (TODO)
 ├── 03-mcp-architecture/
 │   ├── README.md
-│   ├── exercise_01_hello_mcp.py
-│   └── exercise_02_calculator_mcp.py
+│   ├── exercise_01_hello_mcp.py      # 스켈레톤 (TODO)
+│   └── exercise_02_calculator_mcp.py  # 스켈레톤 (TODO)
 ├── 05-genie-mcp/
 │   ├── README.md
 │   ├── .env.example
-│   ├── exercise_00_checklist.py
-│   ├── exercise_01a_create_space.py
-│   ├── exercise_01b_query_space.py
-│   └── exercise_02_genie_mcp_server.py
+│   ├── exercise_00_checklist.py       # 환경 검증 (완성 코드)
+│   ├── exercise_01a_create_space.py   # 스켈레톤 (TODO)
+│   ├── exercise_01b_query_space.py    # 스켈레톤 (TODO)
+│   └── exercise_02_genie_mcp_server.py # 스켈레톤 (TODO)
 ├── 06-skills-workflow/
 │   ├── README.md
-│   ├── exercise_01_simple_skill/
-│   └── exercise_02_skill_with_refs/
+│   ├── exercise_01_simple_skill/      # SKILL.md 템플릿
+│   └── exercise_02_skill_with_refs/   # SKILL.md 템플릿 + references/
 ├── 08-build-ui/
 │   ├── README.md
 │   ├── .env.example
-│   ├── exercise_01_fastapi_basic.py
-│   └── exercise_02_genie_chatbot/
+│   ├── exercise_01_fastapi_basic.py   # 스켈레톤 (TODO)
+│   └── exercise_02_genie_chatbot/     # app.py 스켈레톤 + static/GUIDE.md
 ├── 09-deploy-to-databricks/
 │   ├── README.md
 │   ├── .env.example
-│   ├── app.yaml
-│   └── exercise_01_prepare_deploy.py
+│   ├── app.yaml                       # 참고용 설정
+│   └── exercise_01_prepare_deploy.py  # 스켈레톤 (TODO)
 └── pyproject.toml
 ```
 

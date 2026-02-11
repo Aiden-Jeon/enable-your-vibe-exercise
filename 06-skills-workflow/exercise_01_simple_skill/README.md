@@ -2,20 +2,35 @@
 
 ## 개요
 
-이 예제는 가장 기본적인 형태의 Skill을 보여줍니다. `SKILL.md` 파일 하나만으로 동작하는 간단한 Skill입니다.
+SKILL.md 템플릿을 Claude Code에게 전달하여 간단한 Skill을 완성합니다.
 
 ## 파일 구조
 
 ```
 exercise_01_simple_skill/
-└── SKILL.md          # 스킬 정의 파일
+└── SKILL.md          # 스킬 템플릿 (TODO)
 ```
 
-## 사용 방법
+## Claude Code로 구현하기
 
-1. `SKILL.md` 파일의 내용을 확인합니다
-2. 실제 프로젝트에서 사용하려면 `.claude/skills/data-summary/SKILL.md` 경로에 배치합니다
-3. Claude Code에서 `/data-summary sample.csv` 형태로 실행합니다
+### Step 1: 템플릿 확인
+`SKILL.md` 파일을 열어 TODO 주석을 확인합니다.
+
+### Step 2: Claude Code에게 작성 요청
+```bash
+claude
+
+# 프롬프트 예시
+> SKILL.md에 data-summary 스킬을 작성해줘.
+> CSV 파일을 분석하여 요약 보고서를 마크다운으로 출력하는 스킬이야.
+> 처리 절차: CSV 읽기 → 기본 통계 → 수치형 기술 통계 → 결측치 현황 → 마크다운 출력
+```
+
+### Step 3: Skill 테스트
+완성된 SKILL.md를 `.claude/skills/data-summary/SKILL.md`에 배치하고 Claude Code에서 실행합니다:
+```
+/data-summary sample.csv
+```
 
 ## 학습 포인트
 
@@ -27,14 +42,9 @@ Skill은 최소한 다음 세 가지 섹션을 포함해야 합니다:
 - **처리 절차**: AI가 수행할 단계별 작업을 순서대로 기술합니다
 - **출력 형식**: 최종 결과물의 형태를 명시합니다
 
-### 간단한 Skill의 특징
-
-- 레퍼런스 파일 없이 `SKILL.md` 하나로 동작합니다
-- 범용적인 작업에 적합합니다 (특정 컨벤션에 종속되지 않음)
-- 빠르게 만들고 바로 사용할 수 있습니다
-
 ### 실습 과제
 
-1. `SKILL.md`를 읽고 각 섹션의 역할을 이해합니다
-2. 처리 절차에 "상위 5개 빈도 값 출력" 단계를 추가해봅니다
-3. 출력 형식을 "JSON 형식"으로 변경하고 결과 차이를 비교합니다
+1. Claude Code에게 SKILL.md를 작성하도록 요청합니다
+2. 생성된 SKILL.md를 확인하고 필요시 수정합니다
+3. 처리 절차에 "상위 5개 빈도 값 출력" 단계를 추가해봅니다
+4. 출력 형식을 "JSON 형식"으로 변경하고 결과 차이를 비교합니다

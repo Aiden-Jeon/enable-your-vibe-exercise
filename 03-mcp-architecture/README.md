@@ -5,6 +5,7 @@
 ### 필수 도구
 - **Python 3.11+**: MCP 서버 실행에 필요합니다
 - **uv**: Python 패키지 매니저 (권장)
+- **Claude Code**: Vibe Coding 실습에 사용
 
 ### uv 설치 (미설치 시)
 ```bash
@@ -19,12 +20,27 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 | 파일 | 설명 |
 |------|------|
-| `exercise_01_hello_mcp.py` | Hello MCP - echo, greet 도구를 가진 기본 MCP 서버 |
-| `exercise_02_calculator_mcp.py` | Calculator MCP - 사칙연산 도구를 가진 MCP 서버 |
+| `exercise_01_hello_mcp.py` | Hello MCP - echo, greet 도구 스켈레톤 |
+| `exercise_02_calculator_mcp.py` | Calculator MCP - 사칙연산 도구 스켈레톤 |
 
-## 실행 방법
+## Claude Code로 구현하기
 
-### 방법 1: uv로 직접 실행 (권장)
+### Step 1: 스켈레톤 파일 확인
+각 파일을 열어 TODO 주석과 요구사항을 확인합니다.
+
+### Step 2: Claude Code에게 구현 요청
+```bash
+# Claude Code 실행
+claude
+
+# 프롬프트 예시
+> exercise_01_hello_mcp.py의 TODO를 구현해줘
+> exercise_02_calculator_mcp.py의 사칙연산 도구를 구현해줘
+```
+
+### Step 3: 실행 및 테스트
+
+#### 방법 1: uv로 직접 실행 (권장)
 별도의 패키지 설치 없이 바로 실행할 수 있습니다.
 
 ```bash
@@ -35,7 +51,7 @@ uv run --with fastmcp fastmcp run exercise_01_hello_mcp.py
 uv run --with fastmcp fastmcp run exercise_02_calculator_mcp.py
 ```
 
-### 방법 2: uv sync 후 실행
+#### 방법 2: uv sync 후 실행
 ```bash
 # 프로젝트 루트에서 의존성 설치
 uv sync
@@ -47,7 +63,7 @@ python exercise_01_hello_mcp.py
 python exercise_02_calculator_mcp.py
 ```
 
-## Claude Code에서 사용하기
+## Claude Code에서 MCP 서버 연결
 
 ### 1. 설정 파일 생성
 프로젝트 루트의 `.claude/settings.local.json` 파일에 아래 내용을 추가합니다:

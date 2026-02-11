@@ -2,6 +2,10 @@
 Exercise 01a: Genie Space 생성
 Databricks Genie Space를 API로 생성합니다.
 
+요구사항:
+1. build_serialized_space(): protobuf v2 JSON 형식의 serialized_space 생성
+2. create_genie_space(): POST /api/2.0/genie/spaces로 Space 생성
+
 실행: python exercise_01a_create_space.py
 """
 
@@ -107,45 +111,15 @@ def build_serialized_space(
     Returns:
         protobuf v2 형식의 JSON 문자열
     """
-    # 💡 학습 포인트: Databricks 내부적으로 protobuf v2 JSON 형식을 사용합니다
-    inst_block: dict = {
-        "text_instructions": [
-            {"id": uuid4().hex, "content": [inst]} for inst in instructions
-        ],
-        "example_question_sqls": [
-            {
-                "id": uuid4().hex,
-                "question": [ex["question"]],
-                "sql": [ex["sql"]],
-            }
-            for ex in example_sqls
-        ],
-    }
-
-    # 💡 join_specs: 테이블 간 조인 관계를 명시하여 Genie가 정확한 JOIN SQL을 생성하도록 유도
-    if join_specs:
-        inst_block["join_specs"] = join_specs
-
-    # 💡 sql_snippets: 자주 쓰는 계산식/집계/필터를 미리 정의하여 일관된 SQL 생성 유도
-    if sql_snippets:
-        inst_block["sql_snippets"] = sql_snippets
-
-    proto = {
-        "version": 2,
-        "data_sources": {
-            "tables": [
-                {"identifier": f"{t['catalog']}.{t['schema']}.{t['table']}"}
-                for t in tables
-            ]
-        },
-        "config": {
-            "sample_questions": [
-                {"id": uuid4().hex, "question": [q]} for q in sample_questions
-            ]
-        },
-        "instructions": inst_block,
-    }
-    return json.dumps(proto)
+    # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
+    # 힌트:
+    # - text_instructions: [{"id": uuid4().hex, "content": [inst]} for inst in instructions]
+    # - example_question_sqls: [{"id": uuid4().hex, "question": [...], "sql": [...]} for ex in example_sqls]
+    # - data_sources.tables: [{"identifier": "catalog.schema.table"}]
+    # - config.sample_questions: [{"id": uuid4().hex, "question": [q]}]
+    # - join_specs와 sql_snippets가 있으면 instructions에 추가
+    # - json.dumps()로 직렬화하여 반환
+    raise NotImplementedError("build_serialized_space를 구현하세요")
 
 
 def create_genie_space(
@@ -154,19 +128,23 @@ def create_genie_space(
     warehouse_id: str,
     serialized_space: str,
 ) -> dict:
-    """POST /api/2.0/genie/spaces로 Space를 생성합니다."""
-    resp = httpx.post(
-        f"{DATABRICKS_HOST}/api/2.0/genie/spaces",
-        headers=headers,
-        json={
-            "title": title,
-            "description": description,
-            "warehouse_id": warehouse_id,
-            "serialized_space": serialized_space,
-        },
-    )
-    resp.raise_for_status()
-    return resp.json()
+    """POST /api/2.0/genie/spaces로 Space를 생성합니다.
+
+    Args:
+        title: Space 제목
+        description: Space 설명
+        warehouse_id: SQL Warehouse ID
+        serialized_space: build_serialized_space()의 반환값
+
+    Returns:
+        API 응답 딕셔너리 (space_id 포함)
+    """
+    # TODO: Genie Space 생성 API를 호출하세요
+    # 힌트:
+    # - POST {DATABRICKS_HOST}/api/2.0/genie/spaces
+    # - body: {"title": ..., "description": ..., "warehouse_id": ..., "serialized_space": ...}
+    # - httpx.post() 사용
+    raise NotImplementedError("create_genie_space를 구현하세요")
 
 
 def main():
@@ -218,7 +196,6 @@ def main():
         },
     ]
 
-    # 💡 join_specs: transactions ↔ customers 조인 조건을 명시합니다
     join_specs = [
         {
             "left": {"table": "shared.fashion_recommendations.transactions", "column": "customer_id"},
@@ -227,7 +204,6 @@ def main():
         }
     ]
 
-    # 💡 sql_snippets: 자주 쓰는 계산식/집계/필터를 미리 정의합니다
     sql_snippets = {
         "filters": [
             {

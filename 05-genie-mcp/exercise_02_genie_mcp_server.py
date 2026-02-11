@@ -3,6 +3,14 @@ Exercise 02: Genie MCP 서버
 Databricks Genie를 MCP 서버로 래핑하여 Claude Code에서 사용할 수 있게 합니다.
 Space 생성, 질의, 후속 질의 3개 tool을 제공합니다.
 
+요구사항:
+1. _build_serialized_space(): protobuf v2 JSON 생성
+2. _send_and_poll(): 메시지 전송 + 점진적 백오프 폴링
+3. _format_response(): 응답 텍스트/SQL 추출
+4. create_genie_space tool: Space 생성
+5. ask_genie tool: 새 대화로 질의
+6. continue_conversation tool: 기존 대화에 후속 질문
+
 실행: python exercise_02_genie_mcp_server.py
 """
 
@@ -101,89 +109,59 @@ def _build_serialized_space(
     join_specs: list[dict] | None = None,
     sql_snippets: dict | None = None,
 ) -> str:
-    """protobuf v2 JSON 형식의 serialized_space를 생성합니다."""
-    inst_block: dict = {
-        "text_instructions": [
-            {"id": uuid4().hex, "content": [inst]} for inst in instructions
-        ],
-        "example_question_sqls": [
-            {
-                "id": uuid4().hex,
-                "question": [ex["question"]],
-                "sql": [ex["sql"]],
-            }
-            for ex in example_sqls
-        ],
-    }
+    """protobuf v2 JSON 형식의 serialized_space를 생성합니다.
 
-    if join_specs:
-        inst_block["join_specs"] = join_specs
+    Args:
+        tables: [{"catalog": "...", "schema": "...", "table": "..."}]
+        instructions: 텍스트 지시사항 리스트
+        sample_questions: 예제 질문 리스트
+        example_sqls: [{"question": "...", "sql": "..."}]
+        join_specs: 테이블 간 조인 조건 리스트
+        sql_snippets: SQL 스니펫 (expressions, measures, filters)
 
-    if sql_snippets:
-        inst_block["sql_snippets"] = sql_snippets
-
-    proto = {
-        "version": 2,
-        "data_sources": {
-            "tables": [
-                {"identifier": f"{t['catalog']}.{t['schema']}.{t['table']}"}
-                for t in tables
-            ]
-        },
-        "config": {
-            "sample_questions": [
-                {"id": uuid4().hex, "question": [q]} for q in sample_questions
-            ]
-        },
-        "instructions": inst_block,
-    }
-    return json.dumps(proto)
+    Returns:
+        protobuf v2 형식의 JSON 문자열
+    """
+    # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
+    # 힌트: exercise_01a의 build_serialized_space()와 동일한 구조
+    raise NotImplementedError("_build_serialized_space를 구현하세요")
 
 
 def _send_and_poll(space_id: str, conversation_id: str, question: str) -> dict:
-    """메시지를 전송하고 점진적 백오프로 결과를 폴링합니다."""
-    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
-    resp = httpx.post(
-        f"{base_url}/conversations/{conversation_id}/messages",
-        headers=headers,
-        json={"content": question},
-    )
-    resp.raise_for_status()
-    message_id = resp.json()["message_id"]
+    """메시지를 전송하고 점진적 백오프로 결과를 폴링합니다.
 
-    url = f"{base_url}/conversations/{conversation_id}/messages/{message_id}"
-    start = time.time()
-    interval = 1.0
-    max_wait = 120
+    Args:
+        space_id: Genie Space ID
+        conversation_id: 대화 ID
+        question: 자연어 질문
 
-    while time.time() - start < max_wait:
-        resp = httpx.get(url, headers=headers)
-        resp.raise_for_status()
-        data = resp.json()
-        status = data.get("status", "")
-        if status == "COMPLETED":
-            return data
-        if status in ("FAILED", "CANCELLED"):
-            return {"error": f"질의 실패: {status}"}
-        time.sleep(interval)
-        interval = min(interval * 1.5, 5.0)
-
-    return {"error": "응답 시간 초과 (120초)"}
+    Returns:
+        완료된 응답 딕셔너리 또는 {"error": "..."} 딕셔너리
+    """
+    # TODO: 메시지 전송 + 점진적 백오프 폴링을 구현하세요
+    # 힌트:
+    # - POST messages → message_id 획득
+    # - GET messages/{message_id} 반복 조회
+    # - 폴링 간격: 1초 → 최대 5초 (1.5배 증가)
+    # - COMPLETED → 결과 반환, FAILED/CANCELLED → error dict 반환
+    # - 120초 초과 → error dict 반환
+    raise NotImplementedError("_send_and_poll을 구현하세요")
 
 
 def _format_response(result: dict) -> str:
-    """Genie 응답에서 텍스트/SQL 결과를 추출합니다."""
-    if "error" in result:
-        return f"오류: {result['error']}"
+    """Genie 응답에서 텍스트/SQL 결과를 추출합니다.
 
-    attachments = result.get("attachments", [])
-    parts = []
-    for att in attachments:
-        if "text" in att:
-            parts.append(att["text"].get("content", ""))
-        if "query" in att:
-            parts.append(f"SQL: {att['query'].get('query', '')}")
-    return "\n".join(parts) if parts else json.dumps(result, indent=2, ensure_ascii=False)
+    Args:
+        result: _send_and_poll()의 반환값
+
+    Returns:
+        포맷된 결과 문자열
+    """
+    # TODO: 응답을 파싱하여 텍스트/SQL을 추출하세요
+    # 힌트:
+    # - "error" 키가 있으면 에러 메시지 반환
+    # - attachments에서 text.content와 query.query 추출
+    raise NotImplementedError("_format_response를 구현하세요")
 
 
 # ============================================================
@@ -214,36 +192,16 @@ def create_genie_space(
         sample_questions: 예제 질문 (예: ["총 매출은?"])
         example_sqls: 예제 SQL [{"question": "...", "sql": "..."}]
         join_specs: 테이블 간 조인 조건 리스트
-            [{"left": {"table": "...", "column": "..."}, "right": {...}, "sql": ["..."]}]
         sql_snippets: SQL 스니펫 (expressions, measures, filters)
-            {"expressions": [...], "measures": [...], "filters": [...]}
 
     Returns:
         생성된 Space 정보 (space_id 포함)
     """
-    serialized = _build_serialized_space(
-        tables=tables,
-        instructions=instructions or [],
-        sample_questions=sample_questions or [],
-        example_sqls=example_sqls or [],
-        join_specs=join_specs,
-        sql_snippets=sql_snippets,
-    )
-
-    resp = httpx.post(
-        f"{DATABRICKS_HOST}/api/2.0/genie/spaces",
-        headers=headers,
-        json={
-            "title": title,
-            "description": description,
-            "warehouse_id": warehouse_id,
-            "serialized_space": serialized,
-        },
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    space_id = data.get("space_id", "unknown")
-    return f"Space 생성 완료\nSpace ID: {space_id}\nTitle: {title}"
+    # TODO: _build_serialized_space()로 serialized_space 생성 후 API 호출
+    # 힌트:
+    # - POST {DATABRICKS_HOST}/api/2.0/genie/spaces
+    # - 결과에서 space_id 추출하여 메시지 반환
+    raise NotImplementedError("create_genie_space를 구현하세요")
 
 
 @mcp.tool()
@@ -257,14 +215,12 @@ def ask_genie(space_id: str, question: str) -> str:
     Returns:
         Genie의 응답 결과 (텍스트 + SQL)
     """
-    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
-    resp = httpx.post(f"{base_url}/conversations", headers=headers)
-    resp.raise_for_status()
-    conversation_id = resp.json()["conversation_id"]
-
-    result = _send_and_poll(space_id, conversation_id, question)
-    response = _format_response(result)
-    return f"{response}\n\n(conversation_id: {conversation_id})"
+    # TODO: 새 대화 생성 후 _send_and_poll()로 질의하세요
+    # 힌트:
+    # - POST {base_url}/conversations → conversation_id
+    # - _send_and_poll() 호출
+    # - _format_response()로 포맷 후 conversation_id 포함하여 반환
+    raise NotImplementedError("ask_genie를 구현하세요")
 
 
 @mcp.tool()
@@ -283,8 +239,9 @@ def continue_conversation(
     Returns:
         Genie의 응답 결과
     """
-    result = _send_and_poll(space_id, conversation_id, question)
-    return _format_response(result)
+    # TODO: 기존 대화에 후속 질문을 보내세요
+    # 힌트: _send_and_poll() + _format_response() 사용
+    raise NotImplementedError("continue_conversation을 구현하세요")
 
 
 if __name__ == "__main__":

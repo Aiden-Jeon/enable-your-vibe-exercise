@@ -2,6 +2,10 @@
 Exercise 01: 배포 준비
 Databricks Apps 배포를 위한 app.yaml 생성 및 프로젝트 구조 확인
 
+요구사항:
+1. create_app_yaml(): Databricks Apps용 app.yaml 설정 생성
+2. check_project_structure(): 배포에 필요한 파일 존재 확인
+
 실행: python exercise_01_prepare_deploy.py
 """
 import os
@@ -9,43 +13,32 @@ import yaml
 
 
 def create_app_yaml(app_name: str = "genie-chatbot", port: int = 8000) -> dict:
-    """Databricks Apps용 app.yaml을 생성합니다."""
-    config = {
-        "command": [
-            "uvicorn",
-            "app:app",
-            "--host", "0.0.0.0",
-            "--port", str(port),
-        ],
-        "env": [
-            {"name": "DATABRICKS_HOST", "value": "{{DATABRICKS_HOST}}"},
-            {"name": "DATABRICKS_TOKEN", "valueFrom": "secret"},
-            {"name": "GENIE_SPACE_ID", "value": "{{GENIE_SPACE_ID}}"},
-        ],
-    }
-    return config
+    """Databricks Apps용 app.yaml 설정을 생성합니다.
+
+    Args:
+        app_name: 앱 이름
+        port: 서버 포트
+
+    Returns:
+        app.yaml에 저장할 설정 딕셔너리
+    """
+    # TODO: Databricks Apps용 설정 딕셔너리를 생성하세요
+    # 힌트:
+    # - command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", str(port)]
+    # - env: DATABRICKS_HOST(value), DATABRICKS_TOKEN(valueFrom: secret), GENIE_SPACE_ID(value)
+    raise NotImplementedError("create_app_yaml를 구현하세요")
 
 
 def check_project_structure():
-    """배포에 필요한 파일들이 있는지 확인합니다."""
-    required_files = [
-        "app.py",
-        "static/index.html",
-        "static/style.css",
-        "static/app.js",
-    ]
+    """배포에 필요한 파일들이 있는지 확인합니다.
 
-    print("📋 프로젝트 구조 확인")
-    print("=" * 40)
-    all_ok = True
-    for f in required_files:
-        exists = os.path.exists(f)
-        status = "✅" if exists else "❌"
-        print(f"  {status} {f}")
-        if not exists:
-            all_ok = False
-
-    return all_ok
+    확인할 파일: app.py, static/index.html, static/style.css, static/app.js
+    """
+    # TODO: 필요한 파일들의 존재 여부를 확인하세요
+    # 힌트:
+    # - os.path.exists()로 각 파일 확인
+    # - 결과를 출력하고 모두 존재하면 True 반환
+    raise NotImplementedError("check_project_structure를 구현하세요")
 
 
 def main():

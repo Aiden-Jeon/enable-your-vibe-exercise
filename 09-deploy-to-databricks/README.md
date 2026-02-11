@@ -22,13 +22,7 @@ databricks configure --token
 # Token: your-personal-access-token
 ```
 
-### 3. 워크스페이스 접근 권한
-
-- Databricks 워크스페이스에 로그인 가능해야 합니다
-- Apps 생성 권한이 필요합니다
-- Genie Space에 접근 가능해야 합니다
-
-### 4. 환경변수 설정
+### 3. 환경변수 설정
 
 ```bash
 cp .env.example .env
@@ -37,7 +31,7 @@ cp .env.example .env
 
 ## app.yaml 설정 설명
 
-`app.yaml`은 Databricks Apps의 핵심 설정 파일입니다.
+`app.yaml`은 Databricks Apps의 핵심 설정 파일입니다. 참고용으로 포함되어 있습니다.
 
 ```yaml
 command:        # 앱 실행 명령어 (리스트 형태)
@@ -50,19 +44,31 @@ command:        # 앱 실행 명령어 (리스트 형태)
 
 env:            # 환경변수 설정
   - name: DATABRICKS_HOST
-    value: "{{DATABRICKS_HOST}}"       # 일반 값
+    value: "{{DATABRICKS_HOST}}"
   - name: DATABRICKS_TOKEN
-    valueFrom: secret                   # Databricks 시크릿에서 가져옴
+    valueFrom: secret
   - name: GENIE_SPACE_ID
     value: "{{GENIE_SPACE_ID}}"
 ```
 
-| 필드 | 설명 |
-|------|------|
-| `command` | 앱을 시작하는 명령어를 리스트로 지정합니다 |
-| `env[].name` | 환경변수 이름 |
-| `env[].value` | 환경변수 값 (직접 지정) |
-| `env[].valueFrom` | `secret`으로 지정하면 Databricks 시크릿에서 값을 가져옵니다 |
+## Claude Code로 구현하기
+
+### Step 1: 스켈레톤 확인
+`exercise_01_prepare_deploy.py`의 TODO 주석을 확인합니다.
+
+### Step 2: Claude Code에게 구현 요청
+```bash
+claude
+
+> exercise_01_prepare_deploy.py의 TODO를 구현해줘
+> app.yaml을 참고해서 create_app_yaml 함수를 구현하고,
+> check_project_structure에서 배포에 필요한 파일을 확인해줘
+```
+
+### Step 3: 실행 및 테스트
+```bash
+python exercise_01_prepare_deploy.py
+```
 
 ## 배포 단계별 가이드
 
@@ -72,15 +78,7 @@ env:            # 환경변수 설정
 python exercise_01_prepare_deploy.py
 ```
 
-필요한 파일들이 모두 있는지 확인합니다:
-- `app.py` - FastAPI 서버
-- `app.yaml` - Databricks Apps 설정
-- `requirements.txt` - Python 의존성
-- `static/` - 정적 파일 (HTML, CSS, JS)
-
 ### Step 2: 로컬 테스트
-
-배포 전에 로컬에서 먼저 테스트합니다:
 
 ```bash
 uvicorn app:app --port 8000
@@ -105,29 +103,14 @@ databricks apps deploy genie-chatbot --source-code-path .
 databricks apps get genie-chatbot
 ```
 
-RUNNING 상태가 되면 배포가 완료된 것입니다.
-
-### Step 6: URL 접속
-
-출력된 URL로 브라우저에서 접속하여 앱이 정상 동작하는지 확인합니다.
-
 ## 트러블슈팅 팁
 
 ### 앱이 시작되지 않는 경우
-
 - **포트 설정 확인**: `app.yaml`의 port와 `app.py`의 port가 일치하는지 확인
-- **`$PORT` 환경변수**: Databricks Apps가 주입하는 PORT 환경변수를 사용하는 것을 권장
-
-### ModuleNotFoundError 발생
-
-- `requirements.txt`에 모든 의존성이 포함되어 있는지 확인
-- `pyproject.toml`을 사용하는 경우 해당 파일이 프로젝트 루트에 있는지 확인
 
 ### Genie API 호출 실패
-
 - Databricks 시크릿에 토큰이 올바르게 설정되어 있는지 확인
 - GENIE_SPACE_ID가 유효한 Space ID인지 확인
-- 워크스페이스에서 Genie Space에 접근 권한이 있는지 확인
 
 ### 로그 확인 방법
 

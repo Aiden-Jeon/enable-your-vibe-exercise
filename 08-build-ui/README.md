@@ -1,6 +1,6 @@
 # Section 08: Build UI - UI 만들기
 
-Genie API를 연동한 채팅 UI를 FastAPI로 구현하는 실습입니다.
+Genie API를 연동한 채팅 UI를 Claude Code와 함께 구현하는 실습입니다.
 
 ## 사전 준비
 
@@ -25,16 +25,24 @@ cp .env.example .env
 | `DATABRICKS_TOKEN` | Databricks Personal Access Token |
 | `GENIE_SPACE_ID` | Genie Space ID |
 
-## 실습 내용
+## Claude Code로 구현하기
 
 ### Exercise 01: FastAPI 기본 서버
 
-FastAPI의 기본 구조를 익히는 워밍업 실습입니다.
+#### Step 1: 스켈레톤 확인
+`exercise_01_fastapi_basic.py`의 TODO 주석을 확인합니다.
 
+#### Step 2: Claude Code에게 구현 요청
+```bash
+claude
+
+> exercise_01_fastapi_basic.py의 TODO를 구현해줘
+```
+
+#### Step 3: 실행 및 테스트
 ```bash
 python exercise_01_fastapi_basic.py
 ```
-
 - 접속: http://localhost:8000
 - API 문서: http://localhost:8000/docs
 
@@ -45,35 +53,45 @@ python exercise_01_fastapi_basic.py
 
 ### Exercise 02: Genie 채팅 UI
 
-Genie API를 연동한 완전한 채팅 애플리케이션입니다.
+#### Step 1: 스켈레톤 확인
+- `exercise_02_genie_chatbot/app.py`의 TODO를 확인합니다
+- `exercise_02_genie_chatbot/static/GUIDE.md`의 UI 요구사항을 확인합니다
 
+#### Step 2: Claude Code에게 구현 요청
 ```bash
 cd exercise_02_genie_chatbot
-python app.py
+claude
+
+# 백엔드 구현
+> app.py의 chat 엔드포인트 TODO를 구현해줘
+
+# 프론트엔드 생성
+> static/GUIDE.md의 요구사항을 읽고 index.html, style.css, app.js를 생성해줘
 ```
 
+#### Step 3: 실행 및 테스트
+```bash
+python app.py
+```
 - 접속: http://localhost:8000
 
 **학습 포인트:**
 - FastAPI로 정적 파일(HTML/CSS/JS) 서빙
 - Pydantic 모델로 요청/응답 스키마 정의
 - Genie API 호출 및 폴링 패턴
-- fetch API를 이용한 프론트엔드-백엔드 통신
-- 채팅 UI 구현 패턴
+- Claude Code로 프론트엔드 UI 생성
 
 ## 파일 구조
 
 ```
 code/
-├── exercise_01_fastapi_basic.py    # Exercise 01: FastAPI 기본 서버
-├── exercise_02_genie_chatbot/      # Exercise 02: Genie 채팅 UI
-│   ├── app.py                      # FastAPI 백엔드
+├── exercise_01_fastapi_basic.py       # 스켈레톤 (TODO)
+├── exercise_02_genie_chatbot/
+│   ├── app.py                         # 스켈레톤 (TODO)
 │   └── static/
-│       ├── index.html              # 채팅 UI HTML
-│       ├── style.css               # 다크 테마 스타일
-│       └── app.js                  # 채팅 프론트엔드 로직
-├── .env.example                    # 환경변수 템플릿
-└── README.md                       # 이 파일
+│       └── GUIDE.md                   # UI 요구사항 가이드
+├── .env.example
+└── README.md
 ```
 
 ## 트러블슈팅
