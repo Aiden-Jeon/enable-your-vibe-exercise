@@ -1,0 +1,18 @@
+# Databricks Apps 설정 파일
+# 이 파일은 앱의 실행 방법과 환경을 정의합니다
+
+command:
+  - uvicorn
+  - app:app
+  - --host
+  - "0.0.0.0"
+  - --port
+  - "8000"
+
+env:
+  - name: DATABRICKS_HOST
+    value: "{{DATABRICKS_HOST}}"
+  - name: DATABRICKS_TOKEN
+    valueFrom: secret
+  - name: GENIE_SPACE_ID
+    value: "{{GENIE_SPACE_ID}}"
