@@ -39,12 +39,12 @@ def resolve_databricks_config() -> tuple[str, str, str]:
         try:
             cfg = configparser.ConfigParser()
             cfg.read(os.path.expanduser("~/.databrickscfg"))
-            profile = cfg["DEFAULT"] if "DEFAULT" in cfg else {}
+            profile = cfg["e2-demo-field-eng"] if "e2-demo-field-eng" in cfg else {}
             if not host:
                 host = profile.get("host", "").rstrip("/")
             if not token and host:
                 result = subprocess.run(
-                    ["databricks", "auth", "token", "--host", host],
+                    ["databricks", "auth", "token", "--host", host, "-p", "e2-demo-field-eng"],
                     capture_output=True,
                     text=True,
                     timeout=10,
