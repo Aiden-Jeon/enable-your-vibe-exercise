@@ -1,12 +1,9 @@
 """
-Exercise 01a: Genie Space 생성
+Exercise 01a: Genie Space 생성 (완성 코드)
 Databricks Genie Space를 API로 생성합니다.
+이 코드를 실행하여 Genie API가 정상 동작하는지 확인하세요.
 
-요구사항:
-1. build_serialized_space(): protobuf v2 JSON 형식의 serialized_space 생성
-2. create_genie_space(): POST /api/2.0/genie/spaces로 Space 생성
-
-실행: python exercise_01a_create_space.py
+실행: uv run python 04-genie-mcp/exercise_01a_create_space.py
 """
 
 import configparser
@@ -111,19 +108,55 @@ def build_serialized_space(
     Returns:
         protobuf v2 형식의 JSON 문자열
     """
-    # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
-    # 힌트:
-    # - text_instructions: 모든 instruction을 하나의 항목으로 병합
-    #   [{"id": uuid4().hex, "content": instructions}] if instructions else []
-    # - example_question_sqls: [{"id": uuid4().hex, "question": [...], "sql": [...]} for ex in example_sqls]
-    # - data_sources.tables: [{"identifier": "catalog.schema.table"}]
-    # - config.sample_questions: [{"id": uuid4().hex, "question": [q]}]
-    # - join_specs와 sql_snippets가 있으면 instructions에 추가
-    # - 모든 id 기반 리스트를 id 기준으로 정렬 (sorted(..., key=lambda x: x["id"]))
-    # - sql_snippets 내부 각 카테고리도 id 기준 정렬
-    # - data_sources.tables는 identifier 기준 정렬
-    # - json.dumps()로 직렬화하여 반환
-    raise NotImplementedError("build_serialized_space를 구현하세요")
+    # 💡 학습 포인트: Databricks 내부적으로 protobuf v2 JSON 형식을 사용합니다
+    inst_block: dict = {
+        "text_instructions": [
+            {"id": uuid4().hex, "content": instructions}
+        ] if instructions else [],
+        "example_question_sqls": sorted(
+            [
+                {
+                    "id": uuid4().hex,
+                    "question": [ex["question"]],
+                    "sql": [ex["sql"]],
+                }
+                for ex in example_sqls
+            ],
+            key=lambda x: x["id"],
+        ),
+    }
+
+    # 💡 join_specs: 테이블 간 조인 관계를 명시하여 Genie가 정확한 JOIN SQL을 생성하도록 유도
+    if join_specs:
+        inst_block["join_specs"] = join_specs
+
+    # 💡 sql_snippets: 자주 쓰는 계산식/집계/필터를 미리 정의하여 일관된 SQL 생성 유도
+    if sql_snippets:
+        sorted_snippets = {}
+        for category, items in sql_snippets.items():
+            sorted_snippets[category] = sorted(items, key=lambda x: x["id"])
+        inst_block["sql_snippets"] = sorted_snippets
+
+    proto = {
+        "version": 2,
+        "data_sources": {
+            "tables": sorted(
+                [
+                    {"identifier": f"{t['catalog']}.{t['schema']}.{t['table']}"}
+                    for t in tables
+                ],
+                key=lambda x: x["identifier"],
+            )
+        },
+        "config": {
+            "sample_questions": sorted(
+                [{"id": uuid4().hex, "question": [q]} for q in sample_questions],
+                key=lambda x: x["id"],
+            )
+        },
+        "instructions": inst_block,
+    }
+    return json.dumps(proto)
 
 
 def create_genie_space(
@@ -143,12 +176,18 @@ def create_genie_space(
     Returns:
         API 응답 딕셔너리 (space_id 포함)
     """
-    # TODO: Genie Space 생성 API를 호출하세요
-    # 힌트:
-    # - POST {DATABRICKS_HOST}/api/2.0/genie/spaces
-    # - body: {"title": ..., "description": ..., "warehouse_id": ..., "serialized_space": ...}
-    # - httpx.post() 사용
-    raise NotImplementedError("create_genie_space를 구현하세요")
+    resp = httpx.post(
+        f"{DATABRICKS_HOST}/api/2.0/genie/spaces",
+        headers=headers,
+        json={
+            "title": title,
+            "description": description,
+            "warehouse_id": warehouse_id,
+            "serialized_space": serialized_space,
+        },
+    )
+    resp.raise_for_status()
+    return resp.json()
 
 
 def main():

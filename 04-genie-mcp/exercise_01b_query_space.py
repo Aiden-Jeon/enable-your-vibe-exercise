@@ -1,14 +1,9 @@
 """
-Exercise 01b: Genie Space 질의
+Exercise 01b: Genie Space 질의 (완성 코드)
 생성된 Genie Space에 자연어 질의를 수행합니다.
+이 코드를 실행하여 Genie 질의 API가 정상 동작하는지 확인하세요.
 
-요구사항:
-1. create_conversation(): 새 대화 생성
-2. send_message(): 자연어 질문 전송
-3. poll_result(): 점진적 백오프로 결과 폴링
-4. format_result(): 응답에서 텍스트/SQL 추출
-
-사용법: python exercise_01b_query_space.py <SPACE_ID>
+사용법: uv run python 04-genie-mcp/exercise_01b_query_space.py <SPACE_ID>
 """
 
 import configparser
@@ -98,37 +93,23 @@ headers = {
 
 
 def create_conversation(space_id: str) -> str:
-    """새 Genie 대화를 생성합니다.
-
-    Args:
-        space_id: Genie Space ID
-
-    Returns:
-        conversation_id 문자열
-    """
-    # TODO: 새 대화를 생성하세요
-    # 힌트:
-    # - POST {DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}/conversations
-    # - 응답에서 conversation_id를 반환
-    raise NotImplementedError("create_conversation을 구현하세요")
+    """새 Genie 대화를 생성합니다."""
+    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
+    resp = httpx.post(f"{base_url}/conversations", headers=headers)
+    resp.raise_for_status()
+    return resp.json()["conversation_id"]
 
 
 def send_message(space_id: str, conversation_id: str, question: str) -> dict:
-    """Genie에 자연어 질문을 보냅니다.
-
-    Args:
-        space_id: Genie Space ID
-        conversation_id: 대화 ID
-        question: 자연어 질문
-
-    Returns:
-        API 응답 딕셔너리 (message_id 포함)
-    """
-    # TODO: 메시지를 전송하세요
-    # 힌트:
-    # - POST {base_url}/conversations/{conversation_id}/messages
-    # - body: {"content": question}
-    raise NotImplementedError("send_message를 구현하세요")
+    """Genie에 자연어 질문을 보냅니다."""
+    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
+    resp = httpx.post(
+        f"{base_url}/conversations/{conversation_id}/messages",
+        headers=headers,
+        json={"content": question},
+    )
+    resp.raise_for_status()
+    return resp.json()
 
 
 def poll_result(
@@ -137,41 +118,42 @@ def poll_result(
     message_id: str,
     max_wait: int = 120,
 ) -> dict:
-    """결과가 준비될 때까지 점진적 백오프로 폴링합니다.
+    """결과가 준비될 때까지 점진적 백오프로 폴링합니다."""
+    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
+    url = f"{base_url}/conversations/{conversation_id}/messages/{message_id}"
 
-    Args:
-        space_id: Genie Space ID
-        conversation_id: 대화 ID
-        message_id: 메시지 ID
-        max_wait: 최대 대기 시간(초)
+    # 💡 학습 포인트: 점진적 백오프 — 초반엔 짧게, 오래 걸리면 간격을 늘림
+    start = time.time()
+    interval = 1.0
+    while time.time() - start < max_wait:
+        resp = httpx.get(url, headers=headers)
+        resp.raise_for_status()
+        data = resp.json()
+        status = data.get("status", "")
 
-    Returns:
-        완료된 응답 딕셔너리
-    """
-    # TODO: 점진적 백오프 폴링을 구현하세요
-    # 힌트:
-    # - GET {base_url}/conversations/{conversation_id}/messages/{message_id}
-    # - status가 "COMPLETED"이면 반환
-    # - status가 "FAILED" 또는 "CANCELLED"이면 RuntimeError 발생
-    # - 폴링 간격: 1초 시작 → 최대 5초까지 1.5배씩 증가
-    raise NotImplementedError("poll_result를 구현하세요")
+        if status == "COMPLETED":
+            return data
+        if status in ("FAILED", "CANCELLED"):
+            raise RuntimeError(f"Genie 질의 실패: {status}")
+
+        elapsed = time.time() - start
+        print(f"  ⏳ 상태: {status} ({elapsed:.0f}초 경과)")
+        time.sleep(interval)
+        interval = min(interval * 1.5, 5.0)  # 최대 5초까지 증가
+
+    raise TimeoutError("Genie 응답 시간 초과")
 
 
 def format_result(data: dict) -> str:
-    """응답에서 텍스트/SQL 결과를 추출합니다.
-
-    Args:
-        data: poll_result()의 반환값
-
-    Returns:
-        포맷된 결과 문자열
-    """
-    # TODO: 응답을 파싱하여 텍스트/SQL을 추출하세요
-    # 힌트:
-    # - data["attachments"]에서 "text"와 "query" 추출
-    # - text: att["text"]["content"]
-    # - query: att["query"]["query"]
-    raise NotImplementedError("format_result를 구현하세요")
+    """응답에서 텍스트/SQL 결과를 추출합니다."""
+    attachments = data.get("attachments", [])
+    parts = []
+    for att in attachments:
+        if "text" in att:
+            parts.append(att["text"].get("content", ""))
+        if "query" in att:
+            parts.append(f"SQL: {att['query'].get('query', '')}")
+    return "\n".join(parts) if parts else json.dumps(data, indent=2, ensure_ascii=False)
 
 
 def main():

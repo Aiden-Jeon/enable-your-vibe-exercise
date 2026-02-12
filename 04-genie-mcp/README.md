@@ -62,36 +62,38 @@ WAREHOUSE_ID=your-sql-warehouse-id   # 선택: 비워두면 자동 조회
 ### Step 1: 환경 검증
 ```bash
 # Exercise 00은 완성 코드 — 바로 실행하여 환경을 확인합니다
-python exercise_00_checklist.py
+uv run python 04-genie-mcp/exercise_00_checklist.py
 ```
 
-### Step 2: Claude Code에게 구현 요청
+### Step 2: API 동작 확인
+
+Exercise 01a/01b는 완성 코드입니다. Claude Code 없이 바로 실행하여 API가 정상 동작하는지 확인합니다.
+
+```bash
+# Exercise 01a: Space 생성 (완성 코드 — 바로 실행)
+uv run python 04-genie-mcp/exercise_01a_create_space.py
+
+# Exercise 01b: Space 질의 (완성 코드 — 01a에서 얻은 SPACE_ID 사용)
+uv run python 04-genie-mcp/exercise_01b_query_space.py <SPACE_ID>
+```
+
+### Step 3: Claude Code로 MCP 서버 구현
+
+Exercise 02만 코딩 실습입니다. 01a/01b의 완성 코드를 참고하여 구현합니다.
 
 ```bash
 # Claude Code 실행
 claude
 
-# Exercise 01a: Space 생성
-> exercise_01a_create_space.py의 TODO를 구현해줘
-
-# Exercise 01b: Space 질의
-> exercise_01b_query_space.py의 TODO를 구현해줘
-
 # Exercise 02: Genie MCP 서버
-> exercise_02_genie_mcp_server.py의 모든 TODO를 구현해줘
+> exercise_01a, 01b를 참고해서 exercise_02의 MCP 서버를 완성해줘
 ```
 
-### Step 3: 실행 및 테스트
+### Step 4: MCP 서버 실행
 
 ```bash
-# Exercise 01a: Space 생성
-python exercise_01a_create_space.py
-
-# Exercise 01b: Space 질의 (01a에서 얻은 SPACE_ID 사용)
-python exercise_01b_query_space.py <SPACE_ID>
-
 # Exercise 02: MCP 서버 실행
-python exercise_02_genie_mcp_server.py
+uv run python 04-genie-mcp/exercise_02_genie_mcp_server.py
 ```
 
 ## 실습 파일
@@ -104,26 +106,26 @@ python exercise_02_genie_mcp_server.py
 python exercise_00_checklist.py
 ```
 
-### Exercise 01a: Genie Space 생성 (스켈레톤)
+### Exercise 01a: Genie Space 생성 (완성 코드)
 
-TODO: `build_serialized_space()`와 `create_genie_space()` 구현
+완성된 코드를 실행하여 Genie Space 생성 API가 정상 동작하는지 확인합니다.
 
-**주요 흐름:**
+**주요 함수:**
 1. `build_serialized_space()` — protobuf v2 JSON 형식으로 Space 설정 생성
 2. `create_genie_space()` — POST /api/2.0/genie/spaces로 Space 생성
 
-### Exercise 01b: Genie Space 질의 (스켈레톤)
+### Exercise 01b: Genie Space 질의 (완성 코드)
 
-TODO: `create_conversation()`, `send_message()`, `poll_result()`, `format_result()` 구현
+완성된 코드를 실행하여 Genie 질의 API가 정상 동작하는지 확인합니다.
 
-**주요 흐름:**
+**주요 함수:**
 1. `create_conversation()` — 새 대화 생성
 2. `send_message()` — 자연어 질문 전송
 3. `poll_result()` — 점진적 백오프 폴링으로 결과 조회
 
-### Exercise 02: Genie MCP 서버 (스켈레톤)
+### Exercise 02: Genie MCP 서버 (코딩 실습)
 
-TODO: 헬퍼 함수 3개 + MCP tool 3개 구현
+Exercise 01a/01b의 완성 코드를 참고하여 헬퍼 함수 3개 + MCP tool 3개를 구현합니다.
 
 **제공 Tool:**
 

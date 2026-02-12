@@ -1,17 +1,11 @@
 """
-Exercise 02: Genie MCP 서버
+Exercise 02: Genie MCP 서버 (코딩 실습)
 Databricks Genie를 MCP 서버로 래핑하여 Claude Code에서 사용할 수 있게 합니다.
 Space 생성, 질의, 후속 질의 3개 tool을 제공합니다.
 
-요구사항:
-1. _build_serialized_space(): protobuf v2 JSON 생성
-2. _send_and_poll(): 메시지 전송 + 점진적 백오프 폴링
-3. _format_response(): 응답 텍스트/SQL 추출
-4. create_genie_space tool: Space 생성
-5. ask_genie tool: 새 대화로 질의
-6. continue_conversation tool: 기존 대화에 후속 질문
+Exercise 01a/01b의 완성 코드를 참고하여 구현하세요.
 
-실행: python exercise_02_genie_mcp_server.py
+실행: uv run python 04-genie-mcp/exercise_02_genie_mcp_server.py
 """
 
 import configparser
@@ -123,7 +117,8 @@ def _build_serialized_space(
         protobuf v2 형식의 JSON 문자열
     """
     # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
-    # 힌트: exercise_01a의 build_serialized_space()와 동일한 구조
+    # 참고: exercise_01a_create_space.py의 build_serialized_space()
+    # 힌트:
     # - text_instructions: 모든 instruction을 하나의 항목으로 병합
     #   [{"id": uuid4().hex, "content": instructions}] if instructions else []
     # - 모든 id 기반 리스트를 id 기준으로 정렬
@@ -144,6 +139,7 @@ def _send_and_poll(space_id: str, conversation_id: str, question: str) -> dict:
         완료된 응답 딕셔너리 또는 {"error": "..."} 딕셔너리
     """
     # TODO: 메시지 전송 + 점진적 백오프 폴링을 구현하세요
+    # 참고: exercise_01b_query_space.py의 send_message() + poll_result()
     # 힌트:
     # - POST messages → message_id 획득
     # - GET messages/{message_id} 반복 조회
@@ -163,6 +159,7 @@ def _format_response(result: dict) -> str:
         포맷된 결과 문자열
     """
     # TODO: 응답을 파싱하여 텍스트/SQL을 추출하세요
+    # 참고: exercise_01b_query_space.py의 format_result()
     # 힌트:
     # - "error" 키가 있으면 에러 메시지 반환
     # - attachments에서 text.content와 query.query 추출
@@ -203,6 +200,7 @@ def create_genie_space(
         생성된 Space 정보 (space_id 포함)
     """
     # TODO: _build_serialized_space()로 serialized_space 생성 후 API 호출
+    # 참고: exercise_01a_create_space.py의 create_genie_space()
     # 힌트:
     # - POST {DATABRICKS_HOST}/api/2.0/genie/spaces
     # - 결과에서 space_id 추출하여 메시지 반환
@@ -221,6 +219,7 @@ def ask_genie(space_id: str, question: str) -> str:
         Genie의 응답 결과 (텍스트 + SQL)
     """
     # TODO: 새 대화 생성 후 _send_and_poll()로 질의하세요
+    # 참고: exercise_01b_query_space.py의 create_conversation() + send/poll 흐름
     # 힌트:
     # - POST {base_url}/conversations → conversation_id
     # - _send_and_poll() 호출
@@ -245,6 +244,7 @@ def continue_conversation(
         Genie의 응답 결과
     """
     # TODO: 기존 대화에 후속 질문을 보내세요
+    # 참고: exercise_01b_query_space.py의 send/poll 흐름
     # 힌트: _send_and_poll() + _format_response() 사용
     raise NotImplementedError("continue_conversation을 구현하세요")
 
