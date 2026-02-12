@@ -18,6 +18,17 @@ exercise_genie_agents/
     └── serialized-space-instructions.md         # Instructions 블록 구조 가이드 (Step 2에서 활용)
 ```
 
+## 사전 준비: Unity Catalog MCP 서버
+
+`@genie-space-designer` 에이전트가 테이블 스키마를 분석하려면 Unity Catalog MCP 서버가 필요합니다.
+`.mcp.json`에 아래 설정이 추가되어 있는지 확인하세요:
+
+```bash
+claude mcp add -s project unity-catalog -- uv run python 06-agents/exercise_unity_catalog_mcp.py
+```
+
+> `exercise_unity_catalog_mcp.py`는 완성 코드로 제공되며 `list_schemas`, `list_tables`, `describe_table` 3개 도구를 제공합니다.
+
 ## Step 1: `@genie-space-designer` 에이전트 만들기 (10분)
 
 ### 목표
@@ -43,6 +54,7 @@ exercise_genie_agents/
 - **역할 정의**: "당신은 ~입니다"로 시작하는 명확한 역할 부여
 - **제약 조건**: 분석만 수행하고 생성은 하지 않도록 범위 제한
 - **출력 형식**: 테이블 분석, 추천 구성, Sample Questions 등 구조화
+- **MCP 도구 활용**: Unity Catalog MCP의 `list_tables`, `describe_table`로 스키마 분석
 
 ## Step 2: `@genie-instructor` 에이전트 만들기 (15분)
 

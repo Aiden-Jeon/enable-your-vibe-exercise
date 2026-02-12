@@ -39,3 +39,23 @@ Custom Agents를 활용하여 Genie Space 라이프사이클 워크플로우를 
 - Section 05 (Skills)의 개념을 이해하고 있어야 합니다
 - Claude Code가 설치되어 있어야 합니다
 - Genie MCP 서버가 설정되어 있어야 합니다 (Section 04에서 구성)
+
+### Unity Catalog MCP 서버 설정
+
+`@genie-space-designer` 에이전트가 테이블 스키마를 분석하려면 Unity Catalog MCP 서버가 필요합니다.
+
+**제공 Tools:**
+
+| Tool | 설명 | 예시 |
+|------|------|------|
+| `list_schemas` | 카탈로그 내 스키마 목록 조회 | `list_schemas("main")` |
+| `list_tables` | 스키마 내 테이블 목록 조회 | `list_tables("main", "default")` |
+| `describe_table` | 테이블 상세 메타데이터 조회 | `describe_table("main.default.my_table")` |
+
+**`.mcp.json` 설정:**
+
+```bash
+claude mcp add -s project unity-catalog -- uv run python 06-agents/exercise_unity_catalog_mcp.py
+```
+
+> 💡 `exercise_unity_catalog_mcp.py`는 완성 코드로 제공됩니다. 위 명령어 한 줄로 MCP 서버가 등록됩니다.
