@@ -101,7 +101,7 @@ def build_serialized_space(
         sample_questions: 예제 질문 리스트
         example_sqls: [{"question": "...", "sql": "..."}]
         join_specs: 테이블 간 조인 조건 리스트
-            [{"left": {"table": "...", "column": "..."}, "right": {...}, "sql": ["..."]}]
+            [{"left": {"identifier": "...", "alias": "..."}, "right": {...}, "sql": ["..."], "instruction": ["..."]}]
         sql_snippets: SQL 스니펫 (expressions, measures, filters)
             {"expressions": [...], "measures": [...], "filters": [...]}
 
@@ -186,6 +186,8 @@ def create_genie_space(
             "serialized_space": serialized_space,
         },
     )
+    if resp.status_code >= 400:
+        print(f"  ❌ API Error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     return resp.json()
 
@@ -241,9 +243,20 @@ def main():
 
     join_specs = [
         {
-            "left": {"table": "shared.fashion_recommendations.transactions", "column": "customer_id"},
-            "right": {"table": "shared.fashion_recommendations.customers", "column": "customer_id"},
-            "sql": ["shared.fashion_recommendations.transactions.customer_id = shared.fashion_recommendations.customers.customer_id"],
+            "id": uuid4().hex,
+            "left": {
+                "identifier": "shared.fashion_recommendations.customers",
+                "alias": "customers",
+            },
+            "right": {
+                "identifier": "shared.fashion_recommendations.transactions",
+                "alias": "transactions",
+            },
+            "sql": [
+                "`customers`.`customer_id` = `transactions`.`customer_id`",
+                "--rt=FROM_RELATIONSHIP_TYPE_ONE_TO_MANY--",
+            ],
+            "instruction": ["customer's buy logs"],
         }
     ]
 
