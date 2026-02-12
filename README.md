@@ -64,6 +64,7 @@ build_serialized_space 함수를 구현해줘
 | 03 | `03-mcp-architecture/` | MCP 아키텍처 | FastMCP로 첫 MCP 서버 만들기 |
 | 04 | `04-genie-mcp/` | Genie MCP 서버 | Databricks Genie API → MCP 서버 구현 |
 | 05 | `05-skills/` | Skills | Custom Skill 작성, 레퍼런스 활용 |
+| 06 | `06-agents/` | Custom Agents | data-analyst, sql-reviewer 에이전트 만들기 |
 | 07 | `07-build-ui/` | UI 만들기 | FastAPI + 채팅 UI 구현 |
 | 08 | `08-deploy-to-databricks/` | Databricks 배포 | Databricks Apps로 배포 |
 
@@ -92,6 +93,12 @@ enable-your-vibe-code/
 │   ├── README.md
 │   ├── exercise_01_simple_skill/      # SKILL.md 템플릿
 │   └── exercise_02_skill_with_refs/   # SKILL.md 템플릿 + references/
+├── 06-agents/
+│   ├── README.md
+│   └── exercise_genie_analyst/
+│       ├── data-analyst.md
+│       ├── sql-reviewer.md
+│       └── references/
 ├── 07-build-ui/
 │   ├── README.md
 │   ├── .env.example
