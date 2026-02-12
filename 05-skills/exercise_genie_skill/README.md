@@ -82,7 +82,7 @@ cp -r exercise_genie_skill/ .claude/skills/genie-space/
 ```
 
 ```
-/genie-space "패션 추천 분석" "shared.fashion_recommendations"
+/exercise_genie_skill "패션 추천 분석" "shared.fashion_recommendations"
 ```
 
 **기대 결과 (Step 1 대비 개선점):**
