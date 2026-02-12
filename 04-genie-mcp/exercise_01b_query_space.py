@@ -92,22 +92,16 @@ headers = {
 }
 
 
-def create_conversation(space_id: str) -> str:
-    """새 Genie 대화를 생성합니다."""
-    base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
-    resp = httpx.post(f"{base_url}/conversations", headers=headers)
-    resp.raise_for_status()
-    return resp.json()["conversation_id"]
-
-
-def send_message(space_id: str, conversation_id: str, question: str) -> dict:
-    """Genie에 자연어 질문을 보냅니다."""
+def start_conversation(space_id: str, question: str) -> dict:
+    """새 Genie 대화를 시작하고 첫 질문을 보냅니다."""
     base_url = f"{DATABRICKS_HOST}/api/2.0/genie/spaces/{space_id}"
     resp = httpx.post(
-        f"{base_url}/conversations/{conversation_id}/messages",
+        f"{base_url}/start-conversation",
         headers=headers,
         json={"content": question},
     )
+    if resp.status_code >= 400:
+        print(f"  ❌ API Error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     return resp.json()
 
@@ -161,17 +155,15 @@ def main():
     print("=" * 60)
     print(f"  Space ID: {SPACE_ID}")
 
-    print("\n  1️⃣ 대화 생성 중...")
-    conversation_id = create_conversation(SPACE_ID)
-    print(f"     대화 ID: {conversation_id}")
-
     question = "What is the total online revenue for 2020?"
-    print(f"  2️⃣ 질문 전송: '{question}'")
-    result = send_message(SPACE_ID, conversation_id, question)
+    print(f"\n  1️⃣ 대화 시작 + 질문 전송: '{question}'")
+    result = start_conversation(SPACE_ID, question)
+    conversation_id = result["conversation_id"]
     message_id = result["message_id"]
+    print(f"     대화 ID: {conversation_id}")
     print(f"     메시지 ID: {message_id}")
 
-    print("  3️⃣ 결과 대기 중...")
+    print("  2️⃣ 결과 대기 중...")
     final = poll_result(SPACE_ID, conversation_id, message_id)
     print(f"\n✅ 결과:")
     print(f"   {format_result(final)}")

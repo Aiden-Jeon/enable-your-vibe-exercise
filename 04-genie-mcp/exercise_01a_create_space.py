@@ -367,8 +367,10 @@ def main():
         serialized_space=serialized,
     )
     space_id = space["space_id"]
+    space_url = f"{DATABRICKS_HOST}/genie/rooms/{space_id}"
     print(f"  ✅ Space 생성 완료!")
     print(f"     Space ID: {space_id}")
+    print(f"     URL: {space_url}")
 
     print(f"\n💡 Tip: exercise_01b에서 이 Space ID를 사용하세요:")
     print(f"   python exercise_01b_query_space.py {space_id}")
