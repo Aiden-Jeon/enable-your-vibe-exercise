@@ -1,35 +1,37 @@
 # Section 06: Custom Agents - 실습 코드
 
-Custom Agents를 활용하여 데이터 분석 워크플로우를 구조화하는 실습 코드입니다.
+Custom Agents를 활용하여 Genie Space 라이프사이클 워크플로우를 구조화하는 실습 코드입니다.
 
 ## 실습 구성
 
-### Exercise: Genie Analyst 에이전트 만들기
+### Exercise: Genie Space 라이프사이클 에이전트 만들기
 
-- **경로**: `exercise_genie_analyst/`
-- **목표**: Genie Space 데이터 분석과 SQL 리뷰를 수행하는 Custom Agent를 만들어봅니다
-- **소요 시간**: 약 25분 (Step 1: 10분 + Step 2: 15분)
-- **핵심 학습**: agent.md 구조, 역할 정의, 제약 조건, 출력 형식
+- **경로**: `exercise_genie_agents/`
+- **목표**: Genie Space 설계, Instructions 작성, 품질 테스트를 수행하는 Custom Agent를 만들어봅니다
+- **소요 시간**: 약 25분 (Step 1: 10분 + Step 2: 15분 + Bonus: 선택)
+- **핵심 학습**: agent.md 구조, 역할 정의, 제약 조건, 출력 형식, 에이전트 간 역할 분담
 
 ## 실습 순서
 
-1. `exercise_genie_analyst/README.md`를 먼저 읽고 전체 흐름을 파악합니다
-2. Step 1: `data-analyst.md` 템플릿의 TODO를 채워 에이전트를 완성합니다
-3. Step 2: `sql-reviewer.md` 템플릿의 TODO를 채워 에이전트를 완성합니다
-4. 완성된 에이전트를 `.claude/agents/`에 배치하고 실제로 호출하여 테스트합니다
+1. `exercise_genie_agents/README.md`를 먼저 읽고 전체 흐름을 파악합니다
+2. Step 1: `genie-space-designer.md` 템플릿의 TODO를 채워 에이전트를 완성합니다
+3. Step 2: `genie-instructor.md` 템플릿의 TODO를 채워 에이전트를 완성합니다
+4. Bonus: `genie-tester.md` 템플릿의 TODO를 채워 에이전트를 완성합니다 (선택)
+5. 완성된 에이전트를 `.claude/agents/`에 배치하고 실제로 호출하여 테스트합니다
 
 ## Claude Code 프롬프트 예시
 
 ```bash
-# data-analyst 에이전트 작성 요청
-> exercise_genie_analyst/data-analyst.md 템플릿을 기반으로 data-analyst 에이전트를 완성해줘
+# genie-space-designer 에이전트 작성 요청
+> exercise_genie_agents/genie-space-designer.md 템플릿을 기반으로 genie-space-designer 에이전트를 완성해줘
 
-# sql-reviewer 에이전트 작성 요청
-> exercise_genie_analyst/sql-reviewer.md 템플릿과 references/databricks-sql-best-practices.md를 참고해서 sql-reviewer 에이전트를 완성해줘
+# genie-instructor 에이전트 작성 요청
+> exercise_genie_agents/genie-instructor.md 템플릿과 references/serialized-space-instructions.md를 참고해서 genie-instructor 에이전트를 완성해줘
 
 # 에이전트 호출 테스트
-> @data-analyst fashion_recommendations 테이블의 브랜드별 추천 분포를 분석해줘
-> @sql-reviewer 이 SQL 쿼리를 리뷰해줘: SELECT * FROM fashion_recommendations
+> @genie-space-designer catalog.schema의 테이블을 분석해서 Space를 설계해줘
+> @genie-instructor designer 결과를 기반으로 instructions를 작성해줘
+> @genie-tester Space에 sample questions를 질의하고 응답 품질을 평가해줘
 ```
 
 ## 사전 준비
