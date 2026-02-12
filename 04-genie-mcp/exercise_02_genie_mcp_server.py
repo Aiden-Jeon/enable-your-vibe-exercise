@@ -124,6 +124,11 @@ def _build_serialized_space(
     """
     # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
     # 힌트: exercise_01a의 build_serialized_space()와 동일한 구조
+    # - text_instructions: 모든 instruction을 하나의 항목으로 병합
+    #   [{"id": uuid4().hex, "content": instructions}] if instructions else []
+    # - 모든 id 기반 리스트를 id 기준으로 정렬
+    # - sql_snippets 내부 각 카테고리도 id 기준 정렬
+    # - data_sources.tables는 identifier 기준 정렬
     raise NotImplementedError("_build_serialized_space를 구현하세요")
 
 

@@ -113,11 +113,15 @@ def build_serialized_space(
     """
     # TODO: protobuf v2 JSON 형식의 serialized_space를 생성하세요
     # 힌트:
-    # - text_instructions: [{"id": uuid4().hex, "content": [inst]} for inst in instructions]
+    # - text_instructions: 모든 instruction을 하나의 항목으로 병합
+    #   [{"id": uuid4().hex, "content": instructions}] if instructions else []
     # - example_question_sqls: [{"id": uuid4().hex, "question": [...], "sql": [...]} for ex in example_sqls]
     # - data_sources.tables: [{"identifier": "catalog.schema.table"}]
     # - config.sample_questions: [{"id": uuid4().hex, "question": [q]}]
     # - join_specs와 sql_snippets가 있으면 instructions에 추가
+    # - 모든 id 기반 리스트를 id 기준으로 정렬 (sorted(..., key=lambda x: x["id"]))
+    # - sql_snippets 내부 각 카테고리도 id 기준 정렬
+    # - data_sources.tables는 identifier 기준 정렬
     # - json.dumps()로 직렬화하여 반환
     raise NotImplementedError("build_serialized_space를 구현하세요")
 
@@ -208,31 +212,31 @@ def main():
         "filters": [
             {
                 "id": uuid4().hex,
-                "sql": "transactions.sales_channel_id = 1",
+                "sql": ["transactions.sales_channel_id = 1"],
                 "display_name": "Online Sales Only",
                 "synonyms": ["online", "web sales", "e-commerce"],
             },
             {
                 "id": uuid4().hex,
-                "sql": "customers.club_member_status = 'ACTIVE'",
+                "sql": ["customers.club_member_status = 'ACTIVE'"],
                 "display_name": "Active Club Members",
                 "synonyms": ["active members", "club members", "active customers"],
             },
             {
                 "id": uuid4().hex,
-                "sql": "transactions.t_dat >= DATE_SUB(CURRENT_DATE(), 365)",
+                "sql": ["transactions.t_dat >= DATE_SUB(CURRENT_DATE(), 365)"],
                 "display_name": "Last 12 Months",
                 "synonyms": ["last year", "past year", "recent year"],
             },
             {
                 "id": uuid4().hex,
-                "sql": "transactions.sales_channel_id = 2",
+                "sql": ["transactions.sales_channel_id = 2"],
                 "display_name": "In-Store Sales Only",
                 "synonyms": ["in-store", "offline", "store sales", "brick and mortar"],
             },
             {
                 "id": uuid4().hex,
-                "sql": "transactions.t_dat >= DATE_SUB(CURRENT_DATE(), 30)",
+                "sql": ["transactions.t_dat >= DATE_SUB(CURRENT_DATE(), 30)"],
                 "display_name": "Last 30 Days",
                 "synonyms": ["last month", "recent", "past month"],
             },
@@ -241,21 +245,21 @@ def main():
             {
                 "id": uuid4().hex,
                 "alias": "transaction_month",
-                "sql": "transactions.month",
+                "sql": ["transactions.month"],
                 "display_name": "Transaction Month",
                 "synonyms": ["month", "sale month"],
             },
             {
                 "id": uuid4().hex,
                 "alias": "sales_channel_name",
-                "sql": "CASE WHEN transactions.sales_channel_id = 1 THEN 'Online' ELSE 'In-Store' END",
+                "sql": ["CASE WHEN transactions.sales_channel_id = 1 THEN 'Online' ELSE 'In-Store' END"],
                 "display_name": "Sales Channel Name",
                 "synonyms": ["channel", "sales channel"],
             },
             {
                 "id": uuid4().hex,
                 "alias": "transaction_year",
-                "sql": "transactions.year",
+                "sql": ["transactions.year"],
                 "display_name": "Transaction Year",
                 "synonyms": ["year", "sale year"],
             },
@@ -264,28 +268,28 @@ def main():
             {
                 "id": uuid4().hex,
                 "alias": "transaction_count",
-                "sql": "COUNT(*)",
+                "sql": ["COUNT(*)"],
                 "display_name": "Transaction Count",
                 "synonyms": ["number of transactions", "sales count", "purchase count"],
             },
             {
                 "id": uuid4().hex,
                 "alias": "unique_customer_count",
-                "sql": "COUNT(DISTINCT transactions.customer_id)",
+                "sql": ["COUNT(DISTINCT transactions.customer_id)"],
                 "display_name": "Unique Customers",
                 "synonyms": ["customer count", "distinct customers", "number of customers"],
             },
             {
                 "id": uuid4().hex,
                 "alias": "avg_price",
-                "sql": "CAST(AVG(transactions.price) AS DECIMAL(38,2))",
+                "sql": ["CAST(AVG(transactions.price) AS DECIMAL(38,2))"],
                 "display_name": "Average Price",
                 "synonyms": ["avg price", "mean price", "average transaction value"],
             },
             {
                 "id": uuid4().hex,
                 "alias": "total_revenue",
-                "sql": "CAST(SUM(transactions.price) AS DECIMAL(38,2))",
+                "sql": ["CAST(SUM(transactions.price) AS DECIMAL(38,2))"],
                 "display_name": "Total Revenue",
                 "synonyms": ["revenue", "total sales", "sales amount"],
             },
