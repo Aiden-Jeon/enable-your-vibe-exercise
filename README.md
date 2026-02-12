@@ -63,10 +63,8 @@ build_serialized_space 함수를 구현해줘
 | 02 | `02-claude-code-features/` | Claude Code 사용법 | Claude Code로 Python 함수와 테스트 만들기 |
 | 03 | `03-mcp-architecture/` | MCP 아키텍처 | FastMCP로 첫 MCP 서버 만들기 |
 | 04 | `04-genie-mcp/` | Genie MCP 서버 | Databricks Genie API → MCP 서버 구현 |
-| 05 | `05-skills/` | Skills | Custom Skill 작성, 레퍼런스 활용 |
-| 06 | `06-agents/` | Custom Agents | data-analyst, sql-reviewer 에이전트 만들기 |
-| 07 | `07-build-ui/` | UI 만들기 | FastAPI + 채팅 UI 구현 |
-| 08 | `08-deploy-to-databricks/` | Databricks 배포 | Databricks Apps로 배포 |
+| 05 | `05-skills/` | Skills | Genie Space 스킬 작성, 레퍼런스 활용 |
+| 06 | `06-agents/` | Custom Agents | Genie Space 라이프사이클 에이전트 만들기 |
 
 각 디렉토리의 `README.md`에서 상세 실습 가이드를 확인하세요.
 
@@ -91,24 +89,17 @@ enable-your-vibe-code/
 │   └── exercise_02_genie_mcp_server.py # 스켈레톤 (TODO)
 ├── 05-skills/
 │   ├── README.md
-│   ├── exercise_01_simple_skill/      # SKILL.md 템플릿
-│   └── exercise_02_skill_with_refs/   # SKILL.md 템플릿 + references/
+│   └── exercise_genie_skill/
+│       ├── SKILL.md                   # 스킬 템플릿 (TODO)
+│       └── references/
 ├── 06-agents/
 │   ├── README.md
-│   └── exercise_genie_analyst/
-│       ├── data-analyst.md
-│       ├── sql-reviewer.md
-│       └── references/
-├── 07-build-ui/
-│   ├── README.md
-│   ├── .env.example
-│   ├── exercise_01_fastapi_basic.py   # 스켈레톤 (TODO)
-│   └── exercise_02_genie_chatbot/     # app.py 스켈레톤 + static/GUIDE.md
-├── 08-deploy-to-databricks/
-│   ├── README.md
-│   ├── .env.example
-│   ├── app.yaml                       # 참고용 설정
-│   └── exercise_01_prepare_deploy.py  # 스켈레톤 (TODO)
+│   ├── exercise_genie_agents/
+│   │   ├── genie-space-designer.md    # 에이전트 정의 (TODO)
+│   │   ├── genie-instructor.md        # 에이전트 정의 (TODO)
+│   │   ├── genie-tester.md            # 에이전트 정의 (TODO)
+│   │   └── references/
+│   └── exercise_unity_catalog_mcp.py  # MCP 서버 스켈레톤 (TODO)
 └── pyproject.toml
 ```
 
