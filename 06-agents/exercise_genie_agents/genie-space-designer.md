@@ -20,4 +20,5 @@
 ## 출력 형식
 
 <!-- TODO: Space 설계 결과의 출력 형식을 정의하세요 -->
+<!-- 힌트: references/space_sample.json을 참고하여 실제 Space spec 형식에 맞춰 출력 -->
 <!-- 힌트: 분석 대상 테이블, 추천 테이블 구성, Sample Questions, Space 방향성 등 -->

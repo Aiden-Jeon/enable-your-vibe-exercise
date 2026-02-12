@@ -21,4 +21,5 @@
 ## 출력 형식
 
 <!-- TODO: instructions 결과의 출력 형식을 정의하세요 -->
+<!-- 힌트: references/space_sample.json을 참고하여 실제 serialized_space 형식에 맞춰 출력 -->
 <!-- 힌트: text_instructions, example_question_sqls, sql_snippets, join_specs 등 -->
