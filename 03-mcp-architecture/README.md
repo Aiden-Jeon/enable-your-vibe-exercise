@@ -21,7 +21,6 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 | 파일 | 설명 |
 |------|------|
 | `exercise_01_hello_mcp.py` | Hello MCP - echo, greet 도구 스켈레톤 |
-| `exercise_02_calculator_mcp.py` | Calculator MCP - 사칙연산 도구 스켈레톤 |
 
 ## Claude Code로 구현하기
 
@@ -35,7 +34,6 @@ claude
 
 # 프롬프트 예시
 > exercise_01_hello_mcp.py의 TODO를 구현해줘
-> exercise_02_calculator_mcp.py의 사칙연산 도구를 구현해줘
 ```
 
 ### Step 3: 실행 및 테스트
@@ -47,8 +45,6 @@ claude
 # Exercise 01 실행
 uv run --with fastmcp fastmcp run exercise_01_hello_mcp.py
 
-# Exercise 02 실행
-uv run --with fastmcp fastmcp run exercise_02_calculator_mcp.py
 ```
 
 #### 방법 2: uv sync 후 실행
@@ -58,9 +54,6 @@ uv sync
 
 # Exercise 01 실행
 python exercise_01_hello_mcp.py
-
-# Exercise 02 실행
-python exercise_02_calculator_mcp.py
 ```
 
 ## Claude Code에서 MCP 서버 연결
@@ -80,15 +73,6 @@ python exercise_02_calculator_mcp.py
         "03-mcp-architecture/exercise_01_hello_mcp.py"
       ]
     },
-    "calculator": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--with", "fastmcp",
-        "fastmcp", "run",
-        "03-mcp-architecture/exercise_02_calculator_mcp.py"
-      ]
-    }
   }
 }
 ```
@@ -99,8 +83,7 @@ python exercise_02_calculator_mcp.py
 ### 3. 도구 사용 확인
 Claude Code에서 다음과 같이 사용할 수 있습니다:
 - "echo 도구로 'Hello World' 메시지를 보내줘"
-- "3과 5를 더해줘" (계산기 서버 사용)
-- "100을 7로 나눠줘"
+- "내 이름은 홍길동이야, 인사해줘"
 
 ## 학습 포인트
 
@@ -114,5 +97,4 @@ Claude Code에서 다음과 같이 사용할 수 있습니다:
 실습이 끝나면 다음을 시도해보세요:
 
 - `exercise_01_hello_mcp.py`에 문자열을 뒤집는 `reverse` 도구 추가
-- `exercise_02_calculator_mcp.py`에 거듭제곱(`power`) 도구 추가
 - 새로운 MCP 서버를 처음부터 만들어보기 (예: 단위 변환기, 문자열 유틸리티 등)

@@ -78,8 +78,7 @@ enable-your-vibe-code/
 │   └── exercise_02_fibonacci_test.py  # 스켈레톤 (TODO)
 ├── 03-mcp-architecture/
 │   ├── README.md
-│   ├── exercise_01_hello_mcp.py      # 스켈레톤 (TODO)
-│   └── exercise_02_calculator_mcp.py  # 스켈레톤 (TODO)
+│   └── exercise_01_hello_mcp.py      # 스켈레톤 (TODO)
 ├── 04-genie-mcp/
 │   ├── README.md
 │   ├── .env.example
