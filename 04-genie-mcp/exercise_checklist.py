@@ -1,8 +1,8 @@
 """
-Exercise 00: 사전 환경 체크리스트
+사전 환경 체크리스트
 Genie MCP 실습 전 환경 설정이 올바른지 검증합니다.
 
-실행: python exercise_00_checklist.py
+실행: python exercise_checklist.py
 """
 
 import configparser

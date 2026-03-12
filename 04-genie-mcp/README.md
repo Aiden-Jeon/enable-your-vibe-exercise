@@ -23,7 +23,7 @@ uv sync
 
 ## 환경 설정
 
-각 exercise 파일에 포함된 `resolve_databricks_config()` 함수가 인증 정보를 자동으로 해석합니다.
+`genie_helpers.py`의 `resolve_databricks_config()` 함수가 인증 정보를 자동으로 해석합니다.
 
 ### 인증 해석 순서
 
@@ -42,7 +42,7 @@ uv sync
 databricks configure
 
 # 바로 실행 가능!
-python exercise_00_checklist.py
+python exercise_checklist.py
 ```
 
 ### 방법 2: `.env` 파일 (수동)
@@ -62,38 +62,27 @@ WAREHOUSE_ID=your-sql-warehouse-id   # 선택: 비워두면 자동 조회
 ### Step 1: 환경 검증
 ```bash
 # Exercise 00은 완성 코드 — 바로 실행하여 환경을 확인합니다
-uv run python 04-genie-mcp/exercise_00_checklist.py
+uv run python 04-genie-mcp/exercise_checklist.py
 ```
 
-### Step 2: API 동작 확인
+### Step 2: Claude Code로 MCP 서버 구현
 
-Exercise 01a/01b는 완성 코드입니다. Claude Code 없이 바로 실행하여 API가 정상 동작하는지 확인합니다.
-
-```bash
-# Exercise 01a: Space 생성 (완성 코드 — 바로 실행)
-uv run python 04-genie-mcp/exercise_01a_create_space.py
-
-# Exercise 01b: Space 질의 (완성 코드 — 01a에서 얻은 SPACE_ID 사용)
-uv run python 04-genie-mcp/exercise_01b_query_space.py <SPACE_ID>
-```
-
-### Step 3: Claude Code로 MCP 서버 구현
-
-Exercise 02만 코딩 실습입니다. 01a/01b의 완성 코드를 참고하여 구현합니다.
+`genie_helpers.py`에 인증, Space 생성, 질의에 필요한 모든 헬퍼 함수가 완성 코드로 제공됩니다.
+Exercise 02에서는 이 헬퍼 함수를 활용하여 MCP tool 3개만 구현합니다.
 
 ```bash
 # Claude Code 실행
 claude
 
 # Exercise 02: Genie MCP 서버
-> exercise_01a, 01b를 참고해서 exercise_02의 MCP 서버를 완성해줘
+> genie_helpers.py를 활용해서 exercise_02의 MCP tool 3개를 완성해줘
 ```
 
-### Step 4: MCP 서버 실행
+### Step 3: MCP 서버 실행
 
 ```bash
 # Exercise 02: MCP 서버 실행
-uv run python 04-genie-mcp/exercise_02_genie_mcp_server.py
+uv run python 04-genie-mcp/exercise_genie_mcp_server.py
 ```
 
 ## 실습 파일
@@ -103,37 +92,33 @@ uv run python 04-genie-mcp/exercise_02_genie_mcp_server.py
 실습 시작 전 환경 설정이 올바른지 검증합니다.
 
 ```bash
-python exercise_00_checklist.py
+python exercise_checklist.py
 ```
 
-### Exercise 01a: Genie Space 생성 (완성 코드)
+### genie_helpers.py: 헬퍼 함수 모음 (완성 코드)
 
-완성된 코드를 실행하여 Genie Space 생성 API가 정상 동작하는지 확인합니다.
-
-**주요 함수:**
-1. `build_serialized_space()` — protobuf v2 JSON 형식으로 Space 설정 생성
-2. `create_genie_space()` — POST /api/2.0/genie/spaces로 Space 생성
-
-### Exercise 01b: Genie Space 질의 (완성 코드)
-
-완성된 코드를 실행하여 Genie 질의 API가 정상 동작하는지 확인합니다.
+Space 생성 및 질의에 필요한 모든 헬퍼 함수를 제공합니다.
 
 **주요 함수:**
-1. `create_conversation()` — 새 대화 생성
-2. `send_message()` — 자연어 질문 전송
-3. `poll_result()` — 점진적 백오프 폴링으로 결과 조회
+1. `resolve_databricks_config()` — 인증 정보 해석 (.env → databricks CLI → 기본값)
+2. `build_serialized_space()` — protobuf v2 JSON 형식으로 Space 설정 생성
+3. `create_genie_space()` — POST /api/2.0/genie/spaces로 Space 생성
+4. `start_conversation()` — 새 대화 시작 + 첫 질문
+5. `poll_result()` — 점진적 백오프 폴링
+6. `send_and_poll()` — 메시지 전송 + 폴링 (기존 대화 이어가기)
+7. `format_result()` — 응답 파싱
 
 ### Exercise 02: Genie MCP 서버 (코딩 실습)
 
-Exercise 01a/01b의 완성 코드를 참고하여 헬퍼 함수 3개 + MCP tool 3개를 구현합니다.
+`genie_helpers.py`의 헬퍼 함수를 활용하여 MCP tool 3개를 구현합니다.
 
 **제공 Tool:**
 
-| Tool | 설명 |
-|------|------|
-| `create_genie_space` | Genie Space를 생성합니다 |
-| `ask_genie` | 새 대화를 시작하고 자연어로 데이터를 질의합니다 |
-| `continue_conversation` | 기존 대화에 후속 질문을 합니다 |
+| Tool | 설명 | 활용할 헬퍼 |
+|------|------|------------|
+| `create_genie_space` | Genie Space를 생성합니다 | `build_serialized_space()` + `create_genie_space()` |
+| `ask_genie` | 새 대화를 시작하고 자연어로 데이터를 질의합니다 | `start_conversation()` + `poll_result()` + `format_result()` |
+| `continue_conversation` | 기존 대화에 후속 질문을 합니다 | `send_and_poll()` + `format_result()` |
 
 ## Claude Code에서 MCP 서버 연결
 
@@ -144,7 +129,7 @@ Exercise 01a/01b의 완성 코드를 참고하여 헬퍼 함수 3개 + MCP tool 
   "mcpServers": {
     "genie": {
       "command": "python",
-      "args": ["04-genie-mcp/exercise_02_genie_mcp_server.py"],
+      "args": ["04-genie-mcp/exercise_genie_mcp_server.py"],
       "cwd": "."
     }
   }
